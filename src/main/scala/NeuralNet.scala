@@ -1,4 +1,4 @@
-import breeze.linalg.{DenseMatrix}
+import breeze.linalg.DenseMatrix
 
 import scala.collection.immutable.Vector
 
