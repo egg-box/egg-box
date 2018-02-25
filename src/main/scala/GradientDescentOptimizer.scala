@@ -2,10 +2,6 @@ import breeze.linalg.{*, DenseMatrix, DenseVector, sum}
 
 import scala.collection.immutable.Vector
 
-def matMap(f: Double => Double, denseMatrices: Vector[DenseMatrix[Double]]): Vector[DenseMatrix[Double]] ={
-  denseMatrices.map(m => m.map(f))
-}
-
 class GradientDescentOptimizer extends Optimizer {
   def calculateLayerErrors(layers: Vector[DenseLayer],
                   yTrue: DenseMatrix[Double], a: Vector[DenseMatrix[Double]],
