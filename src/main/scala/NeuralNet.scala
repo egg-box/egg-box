@@ -81,21 +81,23 @@ class NeuralNet(numFeatures : Int) {
     println("Weights: " + _weights)
   }
 
+  /**
+    * Method that will tune the weights of the neurons of the graph
+    * @param trainingData The data passed in by the user to train the neural net
+    */
   def train(trainingData: DenseMatrix[Double]): Unit = {
 
     // val optimizer = new GradientDescentOptimizer()
 
-    for (i <- trainingData.rows) {
-      val propogationData = forwardPropagation(trainingData(i, ::))
+    val propogationData = forwardPropagation(trainingData)
 
-      // TODO:: Uncomment this when the optomizer is finished
-      // optimizer.updateLayers(_weights, propogationData._1, propogationData._2, propogationData._3)
-    }
+    // TODO:: Uncomment this when the optomizer is finished
+    // optimizer.updateLayers(_weights, propogationData._1, propogationData._2, propogationData._3)
 
     println("Finished training!")
   }
 
-  def predict(): Unit = {
+  def predict(predictingData: DenseMatrix[Double]): DenseMatrix[Double] = {
 
   }
 }
