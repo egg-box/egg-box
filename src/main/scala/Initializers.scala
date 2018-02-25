@@ -1,7 +1,7 @@
 import breeze.linalg.DenseVector
 import scala.util.Random
 
-object WeightInitializers {
+object Initializers {
   def constant = (v: Double) => (x: Int) => DenseVector.tabulate(x) { _ => v }
   def zeros = constant(0)
   def ones = constant(1)
