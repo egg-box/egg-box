@@ -2,6 +2,7 @@ import ActivationPairs.identityPair
 import breeze.linalg.{DenseMatrix, DenseVector}
 
 import scala.collection.immutable.Vector
+import WeightInitializers.ones
 
 
 class NeuralNet(numFeatures : Int) {
@@ -9,14 +10,19 @@ class NeuralNet(numFeatures : Int) {
   private var _weights: Vector[DenseMatrix[Double]] = Vector[DenseMatrix[Double]]()
 
   // add input layer on instantiation
-  _layers = _layers :+ DenseLayer(numFeatures, identityPair)
+  _layers = _layers :+ DenseLayer(numFeatures, identityPair, ones)
 
   def add(newLayer: DenseLayer) : Unit = {
     _layers = _layers :+ newLayer
     val prevLayer = _layers(_layers.length - 2)
 
     // plus one to include bias node
-    _weights = _weights :+ DenseMatrix.tabulate(newLayer.numNeurons, prevLayer.numNeurons + 1){case (i, j) => 0.5}
+    val baseWeights : DenseVector[Double] = DenseVector.vertcat(newLayer.weightInitializer(prevLayer.numNeurons), DenseVector.ones(1))
+    _weights = _weights :+ DenseMatrix.tabulate(newLayer.numNeurons, prevLayer.numNeurons + 1) {
+      (i, j) => {
+        baseWeights(j)
+      }
+    }
   }
 
   // should be private
@@ -44,6 +50,11 @@ class NeuralNet(numFeatures : Int) {
 
     (z, a, a(a.length - 1))
     // return all z, a, and the actual result which is a_{i+1}
+  }
+
+  def printNetwork(): Unit = {
+    println("Layers: " + _layers)
+    println("Weights: " + _weights)
   }
 
 
