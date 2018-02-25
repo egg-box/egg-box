@@ -2,6 +2,7 @@ import breeze.linalg.{*, DenseMatrix, DenseVector, sum}
 
 import scala.collection.immutable.Vector
 
+/*
 class GradientDescentOptimizer extends Optimizer {
   def calculateLayerErrors(layers: Vector[DenseLayer],
                   yTrue: DenseMatrix[Double], a: Vector[DenseMatrix[Double]],
@@ -39,3 +40,4 @@ class GradientDescentOptimizer extends Optimizer {
     }
   }
 }
+*/
