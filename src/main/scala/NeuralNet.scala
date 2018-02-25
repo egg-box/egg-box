@@ -46,5 +46,21 @@ class NeuralNet(numFeatures : Int) {
     // return all z, a, and the actual result which is a_{i+1}
   }
 
+  def train(trainingData: DenseMatrix[Double]): Unit = {
 
+    val optimizer = new GradientDescentOptimizer()
+
+    for (i <- trainingData.rows) {
+      val propogationData = forwardPropagation(trainingData(i, ::))
+
+      // TODO:: Uncomment this when the optomizer is finished
+      // optimizer.updateLayers(_weights, propogationData._1, propogationData._2, propogationData._3)
+    }
+
+    println("Finished training!")
+  }
+
+  def predict(): Unit = {
+
+  }
 }
