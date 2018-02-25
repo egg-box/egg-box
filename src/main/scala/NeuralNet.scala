@@ -81,5 +81,21 @@ class NeuralNet(numFeatures : Int) {
     println("Weights: " + _weights)
   }
 
+  def train(trainingData: DenseMatrix[Double]): Unit = {
 
+    // val optimizer = new GradientDescentOptimizer()
+
+    for (i <- trainingData.rows) {
+      val propogationData = forwardPropagation(trainingData(i, ::))
+
+      // TODO:: Uncomment this when the optomizer is finished
+      // optimizer.updateLayers(_weights, propogationData._1, propogationData._2, propogationData._3)
+    }
+
+    println("Finished training!")
+  }
+
+  def predict(): Unit = {
+
+  }
 }
