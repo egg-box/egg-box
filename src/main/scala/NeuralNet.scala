@@ -97,6 +97,11 @@ class NeuralNet(numFeatures : Int) {
     println("Finished training!")
   }
 
+  /**
+    * Method that will predict the outputs for the data based on the trained data
+    * @param predictingData The matrix of data you want to find outputs for
+    * @return The predicted output of the input data
+    */
   def predict(predictingData: DenseMatrix[Double]): DenseMatrix[Double] = {
 
   }
