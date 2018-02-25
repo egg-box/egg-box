@@ -83,7 +83,7 @@ class NeuralNet(numFeatures : Int) {
 
   def train(trainingData: DenseMatrix[Double]): Unit = {
 
-    val optimizer = new GradientDescentOptimizer()
+    // val optimizer = new GradientDescentOptimizer()
 
     for (i <- trainingData.rows) {
       val propogationData = forwardPropagation(trainingData(i, ::))
