@@ -1,10 +1,6 @@
-import breeze.generic.UFunc
 import breeze.numerics.sigmoid
+
 object ActivationPairs {
-  object sigmoidDeriv extends UFunc {
-    implicit object implDouble extends Impl[Double, Double] {
-      def apply(a: Double) = (1 - sigmoid(a))*sigmoid(a)
-    }
-  }
-  def sigmoidPair = ActivationPair(sigmoid, sigmoidDeriv)
+  def sigmoidPair = ActivationPair((x: Double) => sigmoid(x), (x: Double) => sigmoid(x) * (1 - sigmoid(x)))
+  def identityPair = ActivationPair((x:Double) => x, (_:Double) => 0)
 }

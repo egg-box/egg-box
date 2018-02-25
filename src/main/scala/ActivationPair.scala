@@ -1,3 +1,1 @@
-import breeze.generic.UFunc
-case class ActivationPair(activation: UFunc, derivActivation: UFunc)
-
+case class ActivationPair(activation: Double => Double, derivActivation: Double => Double)
