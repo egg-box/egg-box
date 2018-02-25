@@ -25,7 +25,7 @@ class NeuralNet(numFeatures : Int) {
     }
   }
 
-  // should be private
+  /*// should be private
   def forwardPropagation(input: DenseVector[Double]): (Vector[DenseVector[Double]], Vector[DenseVector[Double]], DenseVector[Double]) = {
     var z = Vector[DenseVector[Double]]()
     var a = Vector[DenseVector[Double]]()
@@ -36,9 +36,33 @@ class NeuralNet(numFeatures : Int) {
     var current : DenseVector[Double] = input
 
     for (i <- _weights.indices) {
-      println(i + " " + current.length + " " + _weights(i).rows + "x" + _weights(i).cols)
       // apply A_i
       current = DenseVector.vertcat(current, DenseVector.ones(1))
+      current =  _weights(i) * current
+      // this becomes z_{i+1}
+      z = z :+ current
+      // apply f_{i+1}
+      current = current.map(_layers(i+1).actFunc.activation)
+      // this becomes a_{i+1}
+      a = a :+ current
+    }
+
+    (z, a, a(a.length - 1))
+    // return all z, a, and the actual result which is a_{i+1}
+  }*/
+
+  def forwardPropagation(input: DenseMatrix[Double]): (Vector[DenseMatrix[Double]], Vector[DenseMatrix[Double]], DenseMatrix[Double]) = {
+    var z = Vector[DenseMatrix[Double]]()
+    var a = Vector[DenseMatrix[Double]]()
+
+    z = z :+ input
+    a = a :+ input
+
+    var current : DenseMatrix[Double] = input
+
+    for (i <- _weights.indices) {
+      // apply A_i
+      current = DenseMatrix.vertcat(current, DenseMatrix.tabulate(1, current.cols){case (i, j) => 1})
       current =  _weights(i) * current
       // this becomes z_{i+1}
       z = z :+ current

@@ -1,6 +1,7 @@
 import breeze.linalg.DenseVector
 import scala.collection.immutable.Vector
 
+/*
 class GradientDescentOptimizer extends Optimizer {
   def updateLayer(layers: Vector[DenseLayer], layerIndex: Int, previousError: DenseVector[Double],
                   yPredicted: DenseVector[Double], yTrue: DenseVector[Double]): DenseVector[Double] = {
@@ -22,3 +23,4 @@ class GradientDescentOptimizer extends Optimizer {
 
   }
 }
+*/
