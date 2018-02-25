@@ -18,9 +18,9 @@ class NeuralNet(numFeatures : Int) {
 
     // plus one to include bias node
     val baseWeights : DenseVector[Double] = DenseVector.vertcat(newLayer.weightInitializer(prevLayer.numNeurons), DenseVector.ones(1))
-    _weights = _weights :+ DenseMatrix.tabulate(newLayer.numNeurons, prevLayer.numNeurons + 1) {
+    _weights = _weights :+ DenseMatrix.tabulate(prevLayer.numNeurons + 1, newLayer.numNeurons) {
       (i, j) => {
-        baseWeights(j)
+        baseWeights(i)
       }
     }
   }
@@ -62,8 +62,8 @@ class NeuralNet(numFeatures : Int) {
 
     for (i <- _weights.indices) {
       // apply A_i
-      current = DenseMatrix.vertcat(current, DenseMatrix.tabulate(1, current.cols){case (i, j) => 1})
-      current =  _weights(i) * current
+      current = DenseMatrix.horzcat(current, DenseMatrix.tabulate(current.rows, 1){case (_, _) => 1.0})
+      current = current * _weights(i)
       // this becomes z_{i+1}
       z = z :+ current
       // apply f_{i+1}
