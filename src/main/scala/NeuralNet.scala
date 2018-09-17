@@ -4,6 +4,7 @@ import Activation.{Identity, act}
 import scala.collection.mutable.ArrayBuffer
 import Initializers.zeros
 
+case class ForwardResult(a: Vector[DenseMatrix[Double]], z: Vector[DenseMatrix[Double]], f: DenseMatrix[Double])
 
 class NeuralNet(numFeatures : Int) {
   private val _layers: ArrayBuffer[DenseLayer] = ArrayBuffer[DenseLayer]()
@@ -24,7 +25,7 @@ class NeuralNet(numFeatures : Int) {
     _biases += baseBiases.toDenseVector
   }
 
-  def forward(input: DenseMatrix[Double]): (Vector[DenseMatrix[Double]], Vector[DenseMatrix[Double]], DenseMatrix[Double]) = {
+  def forward(input: DenseMatrix[Double]): ForwardResult = {
     val z = ArrayBuffer[DenseMatrix[Double]]()
     var a = ArrayBuffer[DenseMatrix[Double]]()
 
@@ -45,7 +46,7 @@ class NeuralNet(numFeatures : Int) {
       a += current
     }
 
-    (z.toVector, a.toVector, a(a.length - 1))
+    ForwardResult(z.toVector, a.toVector, a(a.length - 1))
     // return all z, a, and the actual result which is a_{i+1}
   }
 
@@ -60,6 +61,7 @@ class NeuralNet(numFeatures : Int) {
     * @return The predicted output of the input data
     */
   def predict(input: DenseMatrix[Double]): DenseMatrix[Double] = {
-    forward(input)._3
+    forward(input).f
   }
 }
+
