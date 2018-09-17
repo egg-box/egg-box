@@ -1,78 +1,51 @@
-import ActivationPairs.identityPair
-import breeze.linalg.{DenseMatrix, DenseVector}
+import breeze.linalg.{*, DenseMatrix, DenseVector}
+import Activation.{Identity, act}
 
-import scala.collection.immutable.Vector
+import scala.collection.mutable.ArrayBuffer
 import Initializers.zeros
 
 
 class NeuralNet(numFeatures : Int) {
-  private var _layers: Vector[DenseLayer] = Vector[DenseLayer]()
-  private var _weights: Vector[DenseMatrix[Double]] = Vector[DenseMatrix[Double]]()
+  private val _layers: ArrayBuffer[DenseLayer] = ArrayBuffer[DenseLayer]()
+  private val _weights: ArrayBuffer[DenseMatrix[Double]] = ArrayBuffer[DenseMatrix[Double]]()
+  private val _biases: ArrayBuffer[DenseVector[Double]] = ArrayBuffer[DenseVector[Double]]()
 
   // add input layer on instantiation
-  _layers = _layers :+ DenseLayer(numFeatures, identityPair, zeros, zeros)
+  _layers += DenseLayer(numFeatures, Identity, zeros, zeros)
 
   def add(newLayer: DenseLayer) : Unit = {
-    _layers = _layers :+ newLayer
+    _layers += newLayer
     val prevLayer = _layers(_layers.length - 2)
 
     // plus one to include bias node
-    val baseWeights : DenseVector[Double] = DenseVector.vertcat(newLayer.weightInitializer(prevLayer.numNeurons), newLayer.biasInitializer(1))
-    _weights = _weights :+ DenseMatrix.tabulate(prevLayer.numNeurons + 1, newLayer.numNeurons) {
-      (i, j) => {
-        baseWeights(i)
-      }
-    }
+    val baseWeights : DenseMatrix[Double] = newLayer.weightInitializer(prevLayer.numNeurons, newLayer.numNeurons)
+    _weights += baseWeights
+    val baseBiases : DenseMatrix[Double] = newLayer.biasInitializer(1, newLayer.numNeurons)
+    _biases += baseBiases.toDenseVector
   }
 
-  /*// should be private
-  def forwardPropagation(input: DenseVector[Double]): (Vector[DenseVector[Double]], Vector[DenseVector[Double]], DenseVector[Double]) = {
-    var z = Vector[DenseVector[Double]]()
-    var a = Vector[DenseVector[Double]]()
+  def forward(input: DenseMatrix[Double]): (Vector[DenseMatrix[Double]], Vector[DenseMatrix[Double]], DenseMatrix[Double]) = {
+    val z = ArrayBuffer[DenseMatrix[Double]]()
+    var a = ArrayBuffer[DenseMatrix[Double]]()
 
-    z = z :+ input
-    a = a :+ input
-
-    var current : DenseVector[Double] = input
-
-    for (i <- _weights.indices) {
-      // apply A_i
-      current = DenseVector.vertcat(current, DenseVector.ones(1))
-      current =  _weights(i) * current
-      // this becomes z_{i+1}
-      z = z :+ current
-      // apply f_{i+1}
-      current = current.map(_layers(i+1).actFunc.activation)
-      // this becomes a_{i+1}
-      a = a :+ current
-    }
-
-    (z, a, a(a.length - 1))
-    // return all z, a, and the actual result which is a_{i+1}
-  }*/
-
-  def forwardPropagation(input: DenseMatrix[Double]): (Vector[DenseMatrix[Double]], Vector[DenseMatrix[Double]], DenseMatrix[Double]) = {
-    var z = Vector[DenseMatrix[Double]]()
-    var a = Vector[DenseMatrix[Double]]()
-
-    z = z :+ input
-    a = a :+ input
+    z += input
+    a += input
 
     var current : DenseMatrix[Double] = input
 
     for (i <- _weights.indices) {
       // apply A_i
-      current = DenseMatrix.horzcat(current, DenseMatrix.tabulate(current.rows, 1){case (_, _) => 1.0})
       current = current * _weights(i)
+      current = current(*, ::) + _biases(i)
       // this becomes z_{i+1}
-      z = z :+ current
+      z += current
       // apply f_{i+1}
-      current = current.map(_layers(i+1).actFunc.activation)
+      current = act(current, _layers(i+1).activation)
       // this becomes a_{i+1}
-      a = a :+ current
+      a += current
     }
 
-    (z, a, a(a.length - 1))
+    (z.toVector, a.toVector, a(a.length - 1))
     // return all z, a, and the actual result which is a_{i+1}
   }
 
@@ -82,25 +55,11 @@ class NeuralNet(numFeatures : Int) {
   }
 
   /**
-    * Method that will tune the weights of the neurons of the graph
-    * @param trainingData The data passed in by the user to train the neural net
-    */
-  def train(trainingData: DenseMatrix[Double], yTrue: DenseMatrix[Double]): Unit = {
-    val propagationData = forwardPropagation(trainingData)
-
-    val optimizer = new GradientDescentOptimizer()
-    println(propagationData._1)
-    _weights = optimizer.updateLayers(_layers, yTrue, propagationData._2, propagationData._1, _weights, 0.01)
-
-    println("Finished training!")
-  }
-
-  /**
     * Method that will predict the outputs for the data based on the trained data
     * @param input The input data to feed through the NN
     * @return The predicted output of the input data
     */
   def predict(input: DenseMatrix[Double]): DenseMatrix[Double] = {
-    return forwardPropagation(input)._3
+    forward(input)._3
   }
 }

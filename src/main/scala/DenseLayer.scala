@@ -1,4 +1,4 @@
-import breeze.linalg.DenseVector
-
-case class DenseLayer(numNeurons: Int, actFunc: ActivationPair, weightInitializer: Int => DenseVector[Double],
-                      biasInitializer: Int => DenseVector[Double]) extends Layer
+import breeze.linalg.DenseMatrix
+case class DenseLayer(numNeurons: Int, activation: Activation.Value,
+                      weightInitializer: (Int, Int) => DenseMatrix[Double],
+                      biasInitializer: (Int, Int) => DenseMatrix[Double]) extends Layer
